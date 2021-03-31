@@ -113,7 +113,7 @@ const Xor = (a, b) => {
 } 
 
 // Implementing the algorithm
-const DES = (plainText, keys, n) => { 
+const DES = (plainText, keys, n, halfWidth) => { 
 
 	//1. Applying the initial permutation
   	let perm = ""; 
@@ -164,6 +164,7 @@ const DES = (plainText, keys, n) => {
 			right = xored;
 			left = temp;
 		} 
+		console.log("i => ", i);
 	} 
 	// 4. The halves of the plain text are applied
 	let combined_text = left + right;   

@@ -7,7 +7,14 @@ const HalfWidthDropdown = (props) => {
     <div className="dropdown mt-2">
       <b> Select Half Width </b>
       <br />
-      <button className="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button 
+        className="btn dropdown-toggle" 
+        type="button" 
+        id="dropdownMenuButton" 
+        data-toggle="dropdown" 
+        aria-haspopup="true" 
+        aria-expanded="false" 
+        style={{backgroundColor: "white"}}>
         {props.value}
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
