@@ -7,7 +7,7 @@ const Input = (props) => {
         type = "text"
         value = {props.value}
         onChange = {(e) => props.change(e.target.value)}
-        placeholder = {props.placeholder}
+        placeholder = "Plain Text (in 64 Bit Binary)"
         style={{width: "45%"}}
     />
   );

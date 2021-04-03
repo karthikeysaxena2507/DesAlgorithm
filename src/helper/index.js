@@ -113,7 +113,7 @@ const Xor = (a, b) => {
 } 
 
 // Implementing the algorithm
-const DES = (plainText, keys, n, halfWidth) => { 
+const DES = (plainText, keys, n) => { 
 
 	//1. Applying the initial permutation
   	let perm = ""; 
