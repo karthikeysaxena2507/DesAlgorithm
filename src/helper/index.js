@@ -64,7 +64,7 @@ const generate_keys = (n) => {
 	let perm_key = ""; 
 	for(let i = 0; i < 56; i++) perm_key+= key[pc1[i]-1]; 
 
-    console.log("PERM_KEY => ", perm_key);
+    // console.log("PERM_KEY => ", perm_key, n);
 
 	// 2. Dividing the result into two equal halves
 	let left= perm_key.substr(0, 28); 
@@ -164,7 +164,7 @@ const DES = (plainText, keys, n) => {
 			right = xored;
 			left = temp;
 		} 
-		console.log("i => ", i);
+		// console.log("i => ", i);
 	} 
 	// 4. The halves of the plain text are applied
 	let combined_text = left + right;   
