@@ -5,10 +5,6 @@ const { pc1_32,
 	exp_table_64, s_boxes_32, s_boxes_64, s_boxes_128,
 	perm_tab_128, perm_tab_32, perm_tab_64 } = require("./data");
 
-var key32 = "10101010101110110000100100011000";
-var key64 = "1010101010111011000010010001100000100111001101101100110011011101";
-var key128 = "00001000101110110000100100011000001001010011011011001100110111011000100010111011000010010001100110100111001101101100110011011101"
-
 // FUNCTION TO PERFORM CIRCULAR LEFT SHIFT BY 1
 const shift_left_once = (key_chunk, num) => 
 {  
@@ -65,19 +61,15 @@ const Xor = (a, b) => {
 }
 
 // FUNCTION TO GENERATE KEYS
-const generate_keys = (n, len, weak_key) => {
+const generate_keys = (n, len, weak_key, main_key) => {
 
-	if(weak_key !== "")
-	{
-		key32 = weak_key;
-		key64 = weak_key;
-		key128 = weak_key;
-	}
+	let key;
+	if(weak_key !== "") key = weak_key;
+	else key = main_key;
 
-	let key, pc1, pc2, key_limit, key_length;
+	let pc1, pc2, key_limit, key_length;
     if(len === 32) 
 	{
-		key = key32;
 		pc1 = pc1_32;
 		pc2 = pc2_32;
 		key_limit = 28;
@@ -86,7 +78,6 @@ const generate_keys = (n, len, weak_key) => {
 
 	else if(len === 64) 
 	{
-		key = key64;
 		pc1 = pc1_64;
 		pc2 = pc2_64;
 		key_limit = 56;
@@ -95,7 +86,6 @@ const generate_keys = (n, len, weak_key) => {
 
 	else if(len === 128)
 	{
-		key = key128;
 		pc1 = pc1_128;
 		pc2 = pc2_128;
 		key_limit = 112;

@@ -4,6 +4,7 @@ import helper from "./helper/index";
 const App = () => {
 
   const [plainText, setPlainText] = useState("");
+  const [mainKey, setMainKey] = useState("");
   const [text, setText] = useState("");
   const [cipheredText1, setCipheredText1] = useState("");
   const [cipheredText8, setCipheredText8] = useState("");
@@ -56,10 +57,10 @@ const App = () => {
       alert("Plain Text Length must be 32, 64 or 128");
     }
     else {
-      setKeys1(helper.generate_keys(1, plainText.length, ""));
-      setKeys8(helper.generate_keys(8, plainText.length, ""));
-      setKeys16(helper.generate_keys(16, plainText.length, ""));
-      setKeys32(helper.generate_keys(32, plainText.length, ""));
+      setKeys1(helper.generate_keys(1, plainText.length, "", mainKey));
+      setKeys8(helper.generate_keys(8, plainText.length, "", mainKey));
+      setKeys16(helper.generate_keys(16, plainText.length, "", mainKey));
+      setKeys32(helper.generate_keys(32, plainText.length, "", mainKey));
     }
   }
 
@@ -93,23 +94,27 @@ const App = () => {
   }
 
   const generate_Keys = () => {
-    setKeys_32(helper.generate_keys(32, weakKey.length, weakKey));
-    const keys = helper.generate_keys(32, weakKey.length, weakKey);
+    setKeys_32(helper.generate_keys(32, weakKey.length, weakKey, mainKey));
+    const keys = helper.generate_keys(32, weakKey.length, weakKey, mainKey);
     let i = 0;
     let st = new Set();
     for (i = 0; i <= keys.length; i++) st.add(keys[i]);
-    if(st.size < 32) setMessage("Repeated keys exist, so given key is weak");
-    else setMessage("Repeated keys don't exist, so given key is not weak");
+    if(st.size <= 16) setMessage("Given Key is Weak");
+    else setMessage("Given key is not Weak");
+    console.log(st.size);
   }
 
   return (
-    <div className="text-center mb-5">
+    <div className="text-center mb-5 mt-5">
 
       {/* HEADING */}
-      <h1 style={{marginTop: "120px", textAlign: "center"}}> DES DEMONSTRATION </h1>
+      <h1> DES DEMONSTRATION </h1>
 
       {/* TAKING INPUT FOR PLAIN TEXT */}
-      <input type = "text" value = {plainText} onChange = {(e) => setPlainText(e.target.value)} placeholder = "Plain Text (in 32, 64, or 128 Bit Binary)" />
+      <input className="mt-3" type = "text" value = {plainText} onChange = {(e) => setPlainText(e.target.value)} placeholder = "Enter Plain Text (in 32, 64, or 128 Bit Binary)" />
+
+      {/* TAKING INPUT FOR KEY */}
+      <input className="mt-3" type = "text" value = {mainKey} onChange = {(e) => setMainKey(e.target.value)} placeholder = "Enter Key (in 32, 64, or 128 Bit Binary)" />
 
       {/* GENERATING KEYS */}
       <div> <button className="btn btn-dark mt-2" onClick={() => generateKeys()}> Generate & Print Keys </button> </div>
@@ -151,7 +156,7 @@ const App = () => {
       {/* EFFECT OF WEAK KEYS PART */}
       <h2 className="mt-5"> Effect of Weak Keys </h2>
       <div>
-      <input type = "text" value = {weakKey} onChange = {(e) => setWeakKey(e.target.value)} placeholder = "Enter Key to generate round keys & check if it is weak or not"/>
+      <input type = "text" value = {weakKey} onChange = {(e) => setWeakKey(e.target.value)} placeholder = "Enter Key (32, 64, or 128 bit binary) to generate round keys & check if it is weak or not"/>
         <div> <button className="btn btn-dark mt-3" onClick={() => generate_Keys()}> Generate & Print Keys </button> </div>
         <div className="mt-3"> <b> {message} </b> </div>
         <div className="mt-3 block"> {(keys_32.length > 0) ? keys_32.map(printKeys) : <span> No Keys Generated </span>} </div>
