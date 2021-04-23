@@ -32,14 +32,14 @@ const shift_left_twice = (key_chunk, num) => {
 }
 
 // FUNCTION TO CONVERT A NUMBER FROM DECIMAL TO BINARY
-const convertDecimalToBinary = (decimal, len) => {
+const convertDecimalToBinary = (decimal) => {
 	let binary = "";
     while(decimal !== 0) 
     {
 		binary = (decimal % 2 === 0 ? "0" : "1") + binary; 
-		decimal = decimal/2;
+		decimal = Math.floor(decimal/2);
 	}
-	while(binary.length < len) binary = "0" + binary;
+	while(binary.length < 4) binary = "0" + binary;
     return binary;
 }
 
@@ -150,7 +150,7 @@ const generate_keys = (n, len, weak_key) => {
 // IMPLEMENTING THE ALGORITHM
 const DES = (plainText, keys, n, len) => { 
 
-	let init_perm, inv_perm, exp_table, perm_tab, key_length, width, s_boxes;
+	let init_perm, inv_perm, exp_table, perm_tab, key_length, s_boxes, width;
 
 	if(len === 32) 
 	{
@@ -189,8 +189,7 @@ const DES = (plainText, keys, n, len) => {
 	 * 1. APPLYING THE INITIAL PERMUTATION
 	 */
   	let perm = ""; 
-	if(len === 64) for(let i = 0; i < len; i++) perm += plainText[init_perm[i]-1]; 
-	else perm = plainText;
+	for(let i = 0; i < len; i++) perm += plainText[init_perm[i]-1]; 
 
 	/**
 	 * 2. DIVIDING THE RESULT INTO 2 EQUAL HALVES
@@ -221,26 +220,26 @@ const DES = (plainText, keys, n, len) => {
 		//  *	through substitution boxes. After passing through a 
 		//  *	substituion box, each box is reduces equal number of bits.
 		//  */
-		for(let j = 0; j < width; j++)
-		{ 
+		for (let i = 0; i < width; i++) 
+		{
 			// Finding row and column indices to lookup the
 			// substituition box
-			let row1 = xored.substr(j*6, 1) + xored.substr(j*6 + 5,1);
+			let row1 = xored.substr(i * 6, 1) + xored.substr(i * 6 + 5, 1);
 			let row = convertBinaryToDecimal(row1);
-			let col1 = xored.substr(j*6 + 1,1) + xored.substr(j*6 + 2,1) + xored.substr(j*width + 3,1) + xored.substr(j*width + 4,1);
+			let col1 = xored.substr(i * 6 + 1, 4);
 			let col = convertBinaryToDecimal(col1);
-			let val = s_boxes[j][row][col];
-			res += convertDecimalToBinary(val, 4);  
-		} 
-
-		// // 3.5. ANOTHER PERMUTATION IS APPLIED
+			let val = s_boxes[(i%8)][row][col];
+			res += convertDecimalToBinary(val);
+		}
+		
+		// 3.5. ANOTHER PERMUTATION IS APPLIED
 		let perm2 = ""; 
 		for(let j = 0; j < (len/2); j++) perm2 += res[perm_tab[j]-1]; 
 
-		// // 3.6. THE RESULT IS XORED WITH THE LEFT HALF
+		// 3.6. THE RESULT IS XORED WITH THE LEFT HALF
 		xored = Xor(perm2, left);
 
-		// // 3.7. SWAPPING THE LEFT AND RIGHT PARTS OF PLAIN TEXT
+		// 3.7. SWAPPING THE LEFT AND RIGHT PARTS OF PLAIN TEXT
 		left = xored; 
 		if(i < (n-1))
         { 
@@ -259,10 +258,7 @@ const DES = (plainText, keys, n, len) => {
 	/**
 	 * 5. APPLYING INVERSE OF PERMUTATION
 	 */
-	if(len === 64) {
-		for(let i = 0; i < len; i++) ciphertext += combined_text[inv_perm[i]-1]; 
-	}
-	else ciphertext = combined_text;
+	for(let i = 0; i < len; i++) ciphertext += combined_text[inv_perm[i]-1]; 
 	
 	/**
 	 * RETURNING THE CIPHER TEXT

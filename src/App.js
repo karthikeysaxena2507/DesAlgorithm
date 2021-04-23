@@ -1,8 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import Header from "./Components/Header";
 import helper from "./helper/index";
-import Input from "./Components/Input";
 
 const App = () => {
 
@@ -54,7 +51,6 @@ const App = () => {
     keys32.reverse();
   }
   
-
   const generateKeys = () => {
     if(plainText.length !== 32 && plainText.length !== 64 && plainText.length !== 128) {
       alert("Plain Text Length must be 32, 64 or 128");
@@ -68,7 +64,7 @@ const App = () => {
   }
 
   const printKeys = (props, index) => {
-    return <div key={index}> Round {index + 1} = {props} </div>
+      return <div key={index}> <b> Key For Round {index + 1} </b> = {props} </div>
   }
 
   const diff = (a,b) => {
@@ -108,43 +104,57 @@ const App = () => {
 
   return (
     <div className="text-center mb-5">
-      <Header />
-      <Input value = {plainText} change = {(value) => setPlainText(value)} />
-      <div> eg. 10101010101110110000100100011001101001110011011011001100110111011010101010111011000010010001100110100111001101101100110011011101 (128 bit) </div>
-      <div> eg. 1100101010111011011010010101100110100111001101101100110011011101 (64 bit) </div>
-      <div> eg. 10101010101110110000100100011001 (32 bit) </div>
+
+      {/* HEADING */}
+      <h1 style={{marginTop: "120px", textAlign: "center"}}> DES DEMONSTRATION </h1>
+
+      {/* TAKING INPUT FOR PLAIN TEXT */}
+      <input type = "text" value = {plainText} onChange = {(e) => setPlainText(e.target.value)} placeholder = "Plain Text (in 32, 64, or 128 Bit Binary)" />
+
+      {/* GENERATING KEYS */}
       <div> <button className="btn btn-dark mt-2" onClick={() => generateKeys()}> Generate & Print Keys </button> </div>
-      <div className="mt-3"> {keys32.map(printKeys)} </div>
+
+      {/* PRINTING KEYS */}
+      <div className="mt-3 block"> {(keys32.length > 0) ? keys32.map(printKeys) : <span> No Keys Generated </span>} </div>
+
+      {/* ENCRYPTING THE PLAIN TEXT */}
       <div> <button className="btn btn-dark mt-2" onClick={() => setCipheredText()}> Cipher It </button> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 1 Number of round = {cipheredText1} </b> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 8 Number of rounds = {cipheredText8} </b> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 16 Number of rounds = {cipheredText16} </b> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 32 Number of rounds = {cipheredText32} </b> </div>
+      <div className="block">
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 1 = {cipheredText1} </b> </div>
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 8 = {cipheredText8} </b> </div>
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 16 = {cipheredText16} </b> </div>
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 32 = {cipheredText32} </b> </div>
+      </div>
+
+
+      {/* DECRYPTING THE CIPHER TEXT */}
       <div> <button className="btn btn-dark mt-2" onClick={() => setDeCipheredText()}> DeCipher It </button> </div>
-      <div className="mt-2"> <b> DECIPHERED TEXT FOR 1 Number of round = {deCipheredText1} </b> </div>
-      <div className="mt-2"> <b> DECIPHERED TEXT FOR 8 Number of rounds = {deCipheredText8} </b> </div>
-      <div className="mt-2"> <b> DECIPHERED TEXT FOR 16 Number of rounds = {deCipheredText16} </b> </div>
-      <div className="mt-2"> <b> DECIPHERED TEXT FOR 32 Number of rounds = {deCipheredText32} </b> </div>
-      <h2 className="mt-3"> Avlanche Effect </h2>
-      <p> Change any 1 bit in above plain text, then again create cipher text to see avalanche effect</p>
-      <input
-        type = "text"
-        value = {text}
-        onChange = {(e) => setText(e.target.value)}
-        placeholder = "Above Plain Text with any one bit changed"
-        style={{width: "45%"}}
-      />
-      <div><button className="btn btn-dark mt-2" onClick={() => showEffect()}> Cipher It </button> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 1 Number of round = {cipheredText_1} ({changes1} changes from original cipher text) </b> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 8 Number of rounds = {cipheredText_8} ({changes8} changes from original cipher text) </b> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 16 Number of rounds = {cipheredText_16} ({changes16} changes from original cipher text) </b> </div>
-      <div className="mt-2"> <b> CIPHERED TEXT FOR 32 Number of rounds = {cipheredText_32} ({changes32} changes from original cipher text) </b> </div>
-      <h2 className="mt-3"> Effect of Weak Keys </h2>
+      <div className="block">
+        <div className="mt-2"> <b> Deciphered Text for Number of rounds equal to 1 = {deCipheredText1} </b> </div>
+        <div className="mt-2"> <b> Deciphered Text for Number of rounds equal to 8 = {deCipheredText8} </b> </div>
+        <div className="mt-2"> <b> Deciphered Text for Number of rounds equal to 16 = {deCipheredText16} </b> </div>
+        <div className="mt-2"> <b> Deciphered Text for Number of rounds equal to 32 = {deCipheredText32} </b> </div>
+      </div>
+
+      {/* AVALANCHE EFFECT PART */}
+      <h2 className="mt-5"> Avalanche Effect </h2>
+      <p> Change any 1 or 2 bits in above plain text, then again create cipher text to see avalanche effect</p>      
+      <input type = "text" value = {text} onChange = {(e) => setText(e.target.value)} placeholder = "Enter Above Plain Text with 1 or 2 bits changed" />
+      <div><button className="btn btn-dark mt-3" onClick={() => showEffect()}> Cipher It </button> </div>
+      <div className="block">
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 1 = {cipheredText_1} </b> <br /> <i> ({changes1} changes from original cipher text) </i> </div>
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 8 = {cipheredText_8} </b> <br /> <i> ({changes8} changes from original cipher text) </i> </div>
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 16 = {cipheredText_16} </b> <br /> <i> ({changes16} changes from original cipher text) </i> </div>
+        <div className="mt-2"> <b> Ciphered Text for Number of rounds equal to 32 = {cipheredText_32} </b> <br /> <i> ({changes32} changes from original cipher text) </i> </div>
+      </div>
+
+      {/* EFFECT OF WEAK KEYS PART */}
+      <h2 className="mt-5"> Effect of Weak Keys </h2>
       <div>
-      <input type = "text" value = {weakKey} onChange = {(e) => setWeakKey(e.target.value)} placeholder = "Enter Key to generate round keys & check if it is weak or not" style={{width: "45%"}}/>
-        <div> <button className="btn btn-dark mt-2" onClick={() => generate_Keys()}> Generate & Print Keys </button> </div>
-        <div className="mt-3"> {keys_32.map(printKeys)} </div>
-        <div className="mt-3"> {message} </div>
+      <input type = "text" value = {weakKey} onChange = {(e) => setWeakKey(e.target.value)} placeholder = "Enter Key to generate round keys & check if it is weak or not"/>
+        <div> <button className="btn btn-dark mt-3" onClick={() => generate_Keys()}> Generate & Print Keys </button> </div>
+        <div className="mt-3"> <b> {message} </b> </div>
+        <div className="mt-3 block"> {(keys_32.length > 0) ? keys_32.map(printKeys) : <span> No Keys Generated </span>} </div>
       </div>
     </div>
   );
