@@ -189,8 +189,9 @@ const DES = (plainText, keys, n, len) => {
 	 * 1. APPLYING THE INITIAL PERMUTATION
 	 */
   	let perm = ""; 
-	for(let i = 0; i < len; i++) perm += plainText[init_perm[i]-1]; 
-	
+	if(len === 64) for(let i = 0; i < len; i++) perm += plainText[init_perm[i]-1]; 
+	else perm = plainText;
+
 	/**
 	 * 2. DIVIDING THE RESULT INTO 2 EQUAL HALVES
 	 */
@@ -258,7 +259,10 @@ const DES = (plainText, keys, n, len) => {
 	/**
 	 * 5. APPLYING INVERSE OF PERMUTATION
 	 */
-	for(let i = 0; i < len; i++) ciphertext += combined_text[inv_perm[i]-1]; 
+	if(len === 64) {
+		for(let i = 0; i < len; i++) ciphertext += combined_text[inv_perm[i]-1]; 
+	}
+	else ciphertext = combined_text;
 	
 	/**
 	 * RETURNING THE CIPHER TEXT

@@ -12,6 +12,10 @@ const App = () => {
   const [cipheredText8, setCipheredText8] = useState("");
   const [cipheredText16, setCipheredText16] = useState("");
   const [cipheredText32, setCipheredText32] = useState("");
+  const [deCipheredText1, setDeCipheredText1] = useState("");
+  const [deCipheredText8, setDeCipheredText8] = useState("");
+  const [deCipheredText16, setDeCipheredText16] = useState("");
+  const [deCipheredText32, setDeCipheredText32] = useState("");
   const [cipheredText_1, setCipheredText_1] = useState("");
   const [cipheredText_8, setCipheredText_8] = useState("");
   const [cipheredText_16, setCipheredText_16] = useState("");
@@ -24,6 +28,9 @@ const App = () => {
   const [changes8, setChanges8] = useState(0);
   const [changes16, setChanges16] = useState(0);
   const [changes32, setChanges32] = useState(0);
+  const [weakKey, setWeakKey] = useState("");
+  const [keys_32, setKeys_32] = useState([]);
+  const [message, setMessage] = useState("");
 
   const setCipheredText = () => {
    setCipheredText1(helper.DES(plainText, keys1, 1, plainText.length));
@@ -31,6 +38,22 @@ const App = () => {
    setCipheredText16(helper.DES(plainText, keys16, 16, plainText.length));
    setCipheredText32(helper.DES(plainText, keys32, 32, plainText.length));
   }
+
+  const setDeCipheredText = () => {
+    keys1.reverse();
+    keys8.reverse();
+    keys16.reverse();
+    keys32.reverse();
+    setDeCipheredText1(helper.DES(cipheredText1, keys1, 1, cipheredText1.length));
+    setDeCipheredText8(helper.DES(cipheredText8, keys8, 8, cipheredText8.length));
+    setDeCipheredText16(helper.DES(cipheredText16, keys16, 16, cipheredText16.length));
+    setDeCipheredText32(helper.DES(cipheredText32, keys32, 32, cipheredText32.length));
+    keys1.reverse();
+    keys8.reverse();
+    keys16.reverse();
+    keys32.reverse();
+  }
+  
 
   const generateKeys = () => {
     if(plainText.length !== 32 && plainText.length !== 64 && plainText.length !== 128) {
@@ -73,18 +96,14 @@ const App = () => {
     setChanges32(diff(text32, cipheredText32));
   }
 
-  const weakEffect = () => {
-    setCipheredText1(helper.DES(plainText, keys1, 1, plainText.length));
-    setCipheredText8(helper.DES(plainText, keys8, 8, plainText.length));
-    setCipheredText16(helper.DES(plainText, keys16, 16, plainText.length));
-    setCipheredText32(helper.DES(plainText, keys32, 32, plainText.length));
-  }
-
-  const generate_Keys = (weak_key) => {
-    setKeys1(helper.generate_keys(1, plainText.length, weak_key));
-    setKeys8(helper.generate_keys(8, plainText.length,weak_key));
-    setKeys16(helper.generate_keys(16, plainText.length, weak_key));
-    setKeys32(helper.generate_keys(32, plainText.length, weak_key));
+  const generate_Keys = () => {
+    setKeys_32(helper.generate_keys(32, weakKey.length, weakKey));
+    const keys = helper.generate_keys(32, weakKey.length, weakKey);
+    let i = 0;
+    let st = new Set();
+    for (i = 0; i <= keys.length; i++) st.add(keys[i]);
+    if(st.size < 32) setMessage("Repeated keys exist, so given key is weak");
+    else setMessage("Repeated keys don't exist, so given key is not weak");
   }
 
   return (
@@ -92,7 +111,7 @@ const App = () => {
       <Header />
       <Input value = {plainText} change = {(value) => setPlainText(value)} />
       <div> eg. 10101010101110110000100100011001101001110011011011001100110111011010101010111011000010010001100110100111001101101100110011011101 (128 bit) </div>
-      <div> eg. 1010101010111011000010010001100110100111001101101100110011011101 (64 bit) </div>
+      <div> eg. 1100101010111011011010010101100110100111001101101100110011011101 (64 bit) </div>
       <div> eg. 10101010101110110000100100011001 (32 bit) </div>
       <div> <button className="btn btn-dark mt-2" onClick={() => generateKeys()}> Generate & Print Keys </button> </div>
       <div className="mt-3"> {keys32.map(printKeys)} </div>
@@ -101,6 +120,11 @@ const App = () => {
       <div className="mt-2"> <b> CIPHERED TEXT FOR 8 Number of rounds = {cipheredText8} </b> </div>
       <div className="mt-2"> <b> CIPHERED TEXT FOR 16 Number of rounds = {cipheredText16} </b> </div>
       <div className="mt-2"> <b> CIPHERED TEXT FOR 32 Number of rounds = {cipheredText32} </b> </div>
+      <div> <button className="btn btn-dark mt-2" onClick={() => setDeCipheredText()}> DeCipher It </button> </div>
+      <div className="mt-2"> <b> DECIPHERED TEXT FOR 1 Number of round = {deCipheredText1} </b> </div>
+      <div className="mt-2"> <b> DECIPHERED TEXT FOR 8 Number of rounds = {deCipheredText8} </b> </div>
+      <div className="mt-2"> <b> DECIPHERED TEXT FOR 16 Number of rounds = {deCipheredText16} </b> </div>
+      <div className="mt-2"> <b> DECIPHERED TEXT FOR 32 Number of rounds = {deCipheredText32} </b> </div>
       <h2 className="mt-3"> Avlanche Effect </h2>
       <p> Change any 1 bit in above plain text, then again create cipher text to see avalanche effect</p>
       <input
@@ -117,20 +141,10 @@ const App = () => {
       <div className="mt-2"> <b> CIPHERED TEXT FOR 32 Number of rounds = {cipheredText_32} ({changes32} changes from original cipher text) </b> </div>
       <h2 className="mt-3"> Effect of Weak Keys </h2>
       <div>
-        <p> if for above 64 bit input, key = 1111111111111111111111111111111111111111111111111111111111111111 is used then </p>
-        <div> <button className="btn btn-dark mt-2" onClick={() => generate_Keys("1111111111111111111111111111111111111111111111111111111111111111")}> Generate & Print Keys </button> </div>
-        <p> if for above 64 bit input, key = 1111111111111111111111111111111100000000000000000000000000000000 is used then </p>
-        <div> <button className="btn btn-dark mt-2" onClick={() => generate_Keys("1111111111111111111111111111111100000000000000000000000000000000")}> Generate & Print Keys </button> </div>
-        <p> if for above 64 bit input, key = 0000000000000000000000000000000011111111111111111111111111111111 is used then </p>
-        <div> <button className="btn btn-dark mt-2" onClick={() => generate_Keys("0000000000000000000000000000000011111111111111111111111111111111")}> Generate & Print Keys </button> </div>
-        <p> if for above 64 bit input, key = 0000000000000000000000000000000000000000000000000000000000000000 is used then </p>
-        <div> <button className="btn btn-dark mt-2" onClick={() => generate_Keys("0000000000000000000000000000000000000000000000000000000000000000")}> Generate & Print Keys </button> </div>
-        <div className="mt-3"> {keys32.map(printKeys)} </div>
-        <div> <button className="btn btn-dark mt-2" onClick={() => weakEffect()}> Cipher It </button> </div>
-        <div className="mt-2"> <b> CIPHERED TEXT FOR 1 Number of round = {cipheredText1} </b> </div>
-        <div className="mt-2"> <b> CIPHERED TEXT FOR 8 Number of rounds = {cipheredText8} </b> </div>
-        <div className="mt-2"> <b> CIPHERED TEXT FOR 16 Number of rounds = {cipheredText16} </b> </div>
-        <div className="mt-2"> <b> CIPHERED TEXT FOR 32 Number of rounds = {cipheredText32} </b> </div>
+      <input type = "text" value = {weakKey} onChange = {(e) => setWeakKey(e.target.value)} placeholder = "Enter Key to generate round keys & check if it is weak or not" style={{width: "45%"}}/>
+        <div> <button className="btn btn-dark mt-2" onClick={() => generate_Keys()}> Generate & Print Keys </button> </div>
+        <div className="mt-3"> {keys_32.map(printKeys)} </div>
+        <div className="mt-3"> {message} </div>
       </div>
     </div>
   );
