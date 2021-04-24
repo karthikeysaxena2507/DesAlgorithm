@@ -1,8 +1,6 @@
 An Implementation of DES encryption/decryption algorithm
 ## [DEMO](https://desalgo.netlify.app/)
 
----
-
 Snapshots:
 
 Front Page
